@@ -13,8 +13,8 @@ const DynamicBackground: React.FC = () => {
   };
 
   return (
-    <div className="position-absolute top-50 start-50 translate-middle">
-      <button onClick={changeBg} className="btn btn-info">
+    <div className="position-absolute top-50 start-50 translate-middle border border-3 p-5 bg-white rounded-3">
+      <button onClick={changeBg} className="btn btn-danger">
         Change background
       </button>
     </div>

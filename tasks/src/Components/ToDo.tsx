@@ -15,10 +15,10 @@ const ToDo: React.FC = () => {
   };
 
   return (
-    <div className="text-center p-5 position-absolute top-50 start-50 translate-middle border ">
+    <div className="text-center p-5 position-absolute top-50 start-50 translate-middle border">
       <h2>To-Do List</h2>
       <div className="justify-content-between">
-        <label htmlFor="" className="form-label">
+        <label htmlFor="task" className="form-label">
           Add todo
         </label>
         <input
@@ -35,18 +35,18 @@ const ToDo: React.FC = () => {
       </div>
       <div>
         <ul>
-          {allTodo?.map((x, i: number) => (
+          {allTodo?.map((x: string, i: number) => (
             <li
               className="bg-secondary text-white text-start p-2 my-3 position-relative rounded"
               key={i}
             >
-              {x}{" "}
+              {x}
               <button
                 className="position-absolute top-0 end-0 btn btn-danger"
                 onClick={(): void => delTodo(i)}
               >
                 <i className="fa-solid fa-trash"></i>
-              </button>{" "}
+              </button>
             </li>
           ))}
         </ul>

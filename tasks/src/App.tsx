@@ -10,6 +10,11 @@ import CalculatorApp from "./Components/CalculatorApp";
 import Timer from "./Components/Timer";
 import ToDo from "./Components/ToDo";
 import DynamicBackground from "./Components/DynamicBackground";
+import Routes from "./Components/Routing Setup/Routing";
+import Routing from "./Components/Routing Setup/Routing";
+import RandomQuote from "./Components/RandomQuote";
+import FileUploader from "./Components/FileUploader";
+import AuthenticationForm from "./Components/Authentication Form/AuthenticationForm";
 
 function App() {
   return (
@@ -43,6 +48,18 @@ function App() {
 
       {/* Task:10 Dynamic Background: Create a component that changes its background color when clicked. */}
       {/* <DynamicBackground /> */}
+
+      {/* Task:11 Routing Setup: Set up a basic routing system using React Router. */}
+      {/* <Routing /> */}
+
+      {/* Task:12 Random Quote Generator: Build a component that displays a random quote each time it’s rendered. */}
+      {/* <RandomQuote /> */}
+
+      {/* Task:13 File Uploader: Develop a file uploader component that allows users to upload images. */}
+      <FileUploader />
+
+      {/* Task:14 Authentication Form: Implement a basic authentication form with login and registration */}
+      {/* <AuthenticationForm /> */}
     </div>
   );
 }

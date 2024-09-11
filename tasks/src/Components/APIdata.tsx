@@ -5,7 +5,6 @@ interface Student {
   name: string;
   age: number;
   gender: string;
-  address?: {};
   email: string;
   phone: string;
   courses: string[];
@@ -16,9 +15,9 @@ interface Student {
 const APIdata: React.FC = () => {
   const [studentDetails, setStudentDetails] = useState<Student[]>([]);
   useEffect(() => {
-    fetch("https://freetestapi.com/api/v1/students").then((res) =>
-      res.json().then((data) => setStudentDetails(data))
-    );
+    fetch("https://freetestapi.com/api/v1/students")
+      .then((res) => res.json())
+      .then((data) => setStudentDetails(data));
   }, []);
 
   return (

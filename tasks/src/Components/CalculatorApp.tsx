@@ -1,22 +1,20 @@
-import { count } from "console";
-import React, { ChangeEvent, MouseEvent, useReducer, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 
 const CalculatorApp: React.FC = () => {
-  const [numbers, setnumbers] = useState<{ a: number; b: number }>({
+  const [res, setRes] = useState<number>(0);
+
+  const [numbers, setNumbers] = useState<{ a: number; b: number }>({
     a: 0,
     b: 0,
   });
 
-  const [res, setRes] = useState<number>(0);
-
   const clear = (): void => {
-    setRes(0);
-    setnumbers({
+    setNumbers({
       a: 0,
       b: 0,
     });
+    setRes(0);
   };
-  console.log(numbers);
 
   return (
     <div className="border border-4 border-white shadow-lg w-25 position-absolute top-50 start-50 translate-middle p-4">
@@ -25,23 +23,23 @@ const CalculatorApp: React.FC = () => {
       </header>
       <main>
         <div>
-          <form action="">
+          <form action="form">
             <label className="form-label">Number 1</label>
             <input
               type="number"
               className="form-control"
-              value={numbers.a}
+              value={numbers.a.toString()}
               onChange={(e: ChangeEvent<HTMLInputElement>): void =>
-                setnumbers({ ...numbers, a: parseInt(e.target?.value) })
+                setNumbers({ ...numbers, a: parseInt(e.target?.value) })
               }
             />
             <label className="form-label">Number 2</label>
             <input
               type="number"
               className="form-control"
-              value={numbers.b}
+              value={numbers.b.toString()}
               onChange={(e: ChangeEvent<HTMLInputElement>): void =>
-                setnumbers({ ...numbers, b: parseInt(e.target?.value) })
+                setNumbers({ ...numbers, b: parseInt(e.target?.value) })
               }
             />
 
@@ -88,7 +86,7 @@ const CalculatorApp: React.FC = () => {
           </form>
           <div className="py-2">
             <h5 className="d-inline">
-              Result: <span className="resultArea text-primary">{res}</span>
+              Result: <span className="text-primary">{res ? res : 0}</span>
             </h5>
           </div>
         </div>

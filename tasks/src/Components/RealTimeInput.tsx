@@ -8,7 +8,7 @@ const RealTimeInput: React.FC = () => {
   const [gender, setGender] = useState<string>("");
 
   return (
-    <div className=" border border-3 border-secondary p-4 position-absolute top-50 start-50 translate-middle w-25">
+    <div className="border border-3 border-secondary p-4 position-absolute top-50 start-50 translate-middle w-25">
       <form action="form">
         <h2 className="text-center">Form</h2>
         <div>

@@ -15,7 +15,7 @@ const ListComponent: React.FC = () => {
   ];
 
   return (
-    <div className="text-center p-5 position-absolute top-50 start-50 translate-middle ">
+    <div className="text-center p-5 position-absolute top-50 start-50 translate-middle">
       <h1 className="text-decoration-underline">List-Component</h1>
       <div>
         <ul className="p-2">
