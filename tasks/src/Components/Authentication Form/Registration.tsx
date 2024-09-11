@@ -10,13 +10,13 @@ interface User {
 const Registration: React.FC = () => {
   let [users, setUsers] = useState<User[]>([]);
 
-  const path: NavigateFunction = useNavigate();
-
   const emptyObj: User = {
     name: "",
     email: "",
     password: "",
   };
+
+  const path: NavigateFunction = useNavigate();
 
   let [obj, setObj] = useState<User>(emptyObj);
 
@@ -28,7 +28,6 @@ const Registration: React.FC = () => {
     e.preventDefault();
     users.push(obj);
     setUsers([...users]);
-    console.log(users);
     localStorage.setItem("users", JSON.stringify(users));
     path("/login");
   };

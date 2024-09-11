@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavigateFunction, useNavigate } from "react-router-dom";
 
 interface User {
   name?: string;
@@ -7,8 +7,18 @@ interface User {
   password: string;
 }
 
-const Login: React.FC = () => {
+interface Iprops {
+  info: boolean;
+  method: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Login: React.FC<Iprops> = ({ info, method }) => {
   const data = JSON.parse(localStorage.getItem("users") || "[]");
+
+  const [errEmail, setErrEmail] = useState<string>("");
+  const [errPassword, setErrPassword] = useState<string>("");
+
+  const path: NavigateFunction = useNavigate();
 
   const emptyObj: User = {
     email: "",
@@ -22,16 +32,21 @@ const Login: React.FC = () => {
   };
 
   const checkUser = (): void => {
-    console.log(obj, data);
     let loginUser = data.find((x: User) => x.email === obj.email);
-    if (loginUser) {
-      if (loginUser.password === obj.password) {
-        console.log("login");
-      } else {
-        console.log("incorrect password");
-      }
+    if (!loginUser) {
+      setErrEmail("Incorrect email");
     } else {
-      console.log("incorrect email");
+      setErrEmail("");
+    }
+    if (loginUser?.password !== obj.password) {
+      setErrPassword("Incorrect Password");
+    } else {
+      setErrPassword("");
+    }
+    if (loginUser && loginUser.password === obj.password) {
+      method(true);
+      localStorage.setItem("isLogin", JSON.stringify(true));
+      path("/");
     }
   };
 
@@ -48,9 +63,8 @@ const Login: React.FC = () => {
             aria-describedby="emailHelp"
             onChange={(e): void => handleChange(e)}
           />
-          <div id="emailHelp" className="form-text">
-            We'll never share your email with anyone else.
-          </div>
+
+          {errEmail && <span className="text-danger">{errEmail}</span>}
         </div>
 
         <div className="mb-3">
@@ -61,6 +75,7 @@ const Login: React.FC = () => {
             id="password"
             onChange={(e): void => handleChange(e)}
           />
+          {errPassword && <span className="text-danger">{errPassword}</span>}
         </div>
 
         <button type="button" className="btn btn-primary" onClick={checkUser}>

@@ -56,10 +56,10 @@ function App() {
       {/* <RandomQuote /> */}
 
       {/* Task:13 File Uploader: Develop a file uploader component that allows users to upload images. */}
-      <FileUploader />
+      {/* <FileUploader /> */}
 
       {/* Task:14 Authentication Form: Implement a basic authentication form with login and registration */}
-      {/* <AuthenticationForm /> */}
+      <AuthenticationForm />
     </div>
   );
 }
