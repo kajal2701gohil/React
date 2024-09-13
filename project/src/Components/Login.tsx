@@ -8,11 +8,10 @@ interface User {
 }
 
 interface Iprops {
-  info: boolean;
   method: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Login: React.FC<Iprops> = ({ info, method }) => {
+const Login: React.FC<Iprops> = ({ method }) => {
   const data = JSON.parse(localStorage.getItem("users") || "[]");
 
   const [errEmail, setErrEmail] = useState<string>("");
@@ -48,6 +47,7 @@ const Login: React.FC<Iprops> = ({ info, method }) => {
       method(true);
       loginUser.id = index;
       localStorage.setItem("isLogin", JSON.stringify(true));
+      console.log(loginUser);
       localStorage.setItem("activeUser", JSON.stringify(loginUser));
       path("/");
       console.log(loginUser);
@@ -59,7 +59,9 @@ const Login: React.FC<Iprops> = ({ info, method }) => {
       <form>
         <h1>Login</h1>
         <div className="mb-3">
-          <label className="form-label">Email address</label>
+          <label className="form-label" htmlFor="email">
+            Email address
+          </label>
           <input
             type="email"
             className="form-control"
@@ -72,7 +74,9 @@ const Login: React.FC<Iprops> = ({ info, method }) => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label" htmlFor="password">
+            Password
+          </label>
           <input
             type="password"
             className="form-control"

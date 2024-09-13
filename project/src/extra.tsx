@@ -80,7 +80,7 @@ function App() {
         <Tree
           value={nodes}
           selectionMode="single"
-          onSelect={onSelect}
+          // onSelect={onSelect}
           className="w-full md:w-30rem"
         />
       </div>

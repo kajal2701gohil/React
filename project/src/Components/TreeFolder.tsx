@@ -1,35 +1,37 @@
-import React, { Children, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Tree } from "primereact/tree";
 
+interface Obj {
+  key: string;
+  label: string;
+  children?: [];
+  parentKey: string;
+}
+
 const TreeFolder: React.FC = () => {
-  const [visible, setVisible] = useState(false);
-  const [value, setValue] = useState("");
-  let [count, setCount] = useState(0);
-  let [iconVisible, setIconVisible] = useState(false);
-  let [dialogue, setDialogue] = useState("");
-  let [key, setKey] = useState();
+  const [visible, setVisible] = useState<boolean>(false);
+  const [value, setValue] = useState<string>("");
+  let [iconVisible, setIconVisible] = useState<boolean>(false);
+  let [dialogue, setDialogue] = useState<string>("");
+  const [folders, setFolders] = useState<{}[]>([]);
+  const [selectedKey, setSelectedKey] = useState<Obj>({
+    key: "",
+    label: "",
+    children: [],
+    parentKey: "",
+  });
 
-  const [folders, setFolders] = useState<{}[]>([
-    // {
-    //   label: "a",
-    //   id: 1,
-    //   children: [
-    //     {
-    //       label: "x",
-    //       id: 1 - 1,
-    //     },
-    //   ],
-    // },
-    // {
-    //   label: "b",
-    //   id: 2,
-    // },
-  ]);
+  const [changeFolderKey, setChangeFolderKey] = useState<Obj>({
+    key: "",
+    label: "",
+    children: [],
+    parentKey: "",
+  });
 
-  const nodeTemplate = (node: any, options: any) => {
+  const nodeTemplate = (node: any) => {
     let label = <b>{node.label}</b>;
 
     label = (
@@ -44,13 +46,20 @@ const TreeFolder: React.FC = () => {
           {iconVisible && (
             <>
               {" "}
-              <i className="pi pi-file-edit mx-4"></i>
+              <i
+                className="pi pi-file-edit mx-4"
+                onClick={() => {
+                  setVisible(true);
+                  setDialogue("edit");
+                  setSelectedKey(node);
+                }}
+              ></i>
               <i
                 className="pi pi-plus"
                 onClick={() => {
                   setVisible(true);
                   setDialogue("children");
-                  setKey(node.id);
+                  setSelectedKey(node);
                 }}
               ></i>
             </>
@@ -59,47 +68,83 @@ const TreeFolder: React.FC = () => {
       </>
     );
 
-    return <span className={options.className}>{label}</span>;
+    return <span>{label}</span>;
   };
 
-  const addChildren = () => {
-    // console.log(value, key);
-    let index = folders.findIndex((x: any) => x?.id === key);
-    // console.log(folders[index]);
-    let object: any = folders[index];
-    console.log(object);
-    object.children = [] || object.children;
+  const checkDialogue = (): void => {
+    if (value !== "") {
+      const newFolder: Obj = {
+        key: Date.now().toString(),
+        label: value,
+        children: [],
+        parentKey: selectedKey.key,
+      };
 
-    let obj = { label: "", id: "0" };
-    obj.label = value;
-    obj.id = `${index}-${object.children.length}`;
-    // console.log(obj);
-    object.children.push({ ...obj });
-    // console.log(folders, object.children);
-    setFolders([...folders]);
-    setValue("");
-  };
-
-  const checkDialogue = () => {
-    if (dialogue === "children") {
-      addChildren();
-    }
-    if (dialogue === "category") {
-      addNew();
+      if (dialogue === "children") {
+        addSubFolder(newFolder, selectedKey);
+      }
+      if (dialogue === "category") {
+        addMainFolder(newFolder);
+      }
+      if (dialogue === "edit") {
+        editFolder();
+      }
+      setValue("");
     }
   };
 
-  const addNew = () => {
-    count++;
-    setCount(count);
-    let obj = { label: "", id: 0 };
-    obj.label = value;
-    obj.id = count;
-    folders.push(obj);
-    setFolders([...folders]);
-    setValue("");
+  const editFolder = (): void => {
+    selectedKey.label = value;
+    setSelectedKey(selectedKey);
+    removeFolder(selectedKey);
+    addSubFolder(selectedKey, changeFolderKey);
   };
 
+  const addSubFolder = (newFolder: Obj, key: Obj): void => {
+    const updateFolder = (node: any): void => {
+      if (node.key === key.key) {
+        node.children = node.children || [];
+        node.children.push(newFolder);
+      } else if (node.children) {
+        node.children.map(updateFolder);
+      }
+    };
+
+    const updatedFolders: {}[] = [...folders];
+    updatedFolders.map(updateFolder);
+    setFolders(updatedFolders);
+    setChangeFolderKey({ key: "", label: "", children: [], parentKey: "" });
+  };
+
+  const addMainFolder = (newFolder: Obj): void => {
+    setFolders([...folders, newFolder]);
+  };
+  const selectionId = (e: any): void => {
+    setChangeFolderKey(e.node);
+  };
+
+  const removeFolder = (selectedFolder: Obj): void => {
+    if (selectedFolder.parentKey === "") {
+      let index: number = folders.findIndex(
+        (x: any) => x.key === selectedFolder.key
+      );
+      folders.splice(index, 1);
+    } else {
+      const updateFolder = (node: any): void => {
+        if (node.key === selectedFolder.parentKey) {
+          let index: number = node.children.findIndex(
+            (x: Obj) => x.key === selectedFolder.key
+          );
+          node.children.splice(index, 1);
+        } else if (node.children) {
+          node.children.map(updateFolder);
+        }
+      };
+      const updatedFolders: {}[] = [...folders];
+      updatedFolders.map(updateFolder);
+      setFolders(updatedFolders);
+    }
+  };
   return (
     <div>
       <Tree
@@ -143,22 +188,39 @@ const TreeFolder: React.FC = () => {
                 id="category"
                 className="bg-white-alpha-20 border-none p-3 text-primary-50"
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>): void =>
+                  setValue(e.target.value)
+                }
               ></InputText>
             </div>
+
+            {dialogue === "edit" && (
+              <div className="inline-flex flex-column gap-2">
+                <label className="text-primary-50 font-semibold">
+                  PlacedFolder
+                </label>
+                <Tree
+                  value={folders}
+                  selectionMode="single"
+                  className="w-full md:w-30rem"
+                  onNodeClick={(e): void => selectionId(e)}
+                />
+              </div>
+            )}
 
             <div className="flex align-items-center gap-2">
               <Button
                 label="Add"
                 name="category"
-                onClick={() => checkDialogue()}
-                // onClick={() => addNew()}
+                onClick={(): void => checkDialogue()}
                 text
                 className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
               ></Button>
               <Button
                 label="Close"
-                onClick={(e) => hide(e)}
+                onClick={(
+                  e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+                ): void => hide(e)}
                 text
                 className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
               ></Button>

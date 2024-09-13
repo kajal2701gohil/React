@@ -26,12 +26,27 @@ const Registration: React.FC = () => {
 
   let [obj, setObj] = useState<User>(emptyObj);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setObj((prevData) => ({ ...prevData, [e.target.id]: e.target.value }));
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.id === "profile") {
+      let profile = e.target.files;
+
+      let profileImage = await toBase64(profile);
+      setObj((prevData) => ({ ...prevData, [e.target.id]: profileImage }));
+    } else {
+      setObj((prevData) => ({ ...prevData, [e.target.id]: e.target.value }));
+    }
+    console.log(obj);
   };
 
+  const toBase64 = (file: any) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file[0]);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+    });
+
   const addUser = (e: MouseEvent<HTMLButtonElement>): void => {
-    // console.log(obj);
     if (obj.name === "") {
       setErrName("Please enter the name");
     } else {
@@ -60,42 +75,63 @@ const Registration: React.FC = () => {
       <form>
         <h1>Registration</h1>
         <div className="mb-3">
-          <label className="form-label">Username</label>
+          <label className="form-label" htmlFor="name">
+            Username
+          </label>
           <input
             className="form-control"
             type="text"
             id="name"
             required
-            onChange={(e): void => handleChange(e)}
+            onChange={(e) => handleChange(e)}
           />
           {errname && <span className="text-danger">{errname}</span>}
         </div>
         <div className="mb-3">
-          <label className="form-label">Email address</label>
+          <label className="form-label" htmlFor="email">
+            Email address
+          </label>
           <input
             className="form-control"
             type="email"
             id="email"
             required
-            onChange={(e): void => handleChange(e)}
+            onChange={(e) => handleChange(e)}
           />
           {errEmail && <span className="text-danger">{errEmail}</span>}
         </div>
+
         <div className="mb-3">
-          <label className="form-label">Password</label>
+          <label className="form-label" htmlFor="password">
+            Password
+          </label>
           <input
             className="form-control"
             type="password"
             required
             id="password"
-            onChange={(e): void => handleChange(e)}
+            onChange={(e) => handleChange(e)}
           />
           {errPassword && <span className="text-danger">{errPassword}</span>}
         </div>
+
+        <div className="mb-3">
+          <label className="form-label" htmlFor="profile">
+            Profile
+          </label>
+          <input
+            className="form-control"
+            type="file"
+            required
+            id="profile"
+            onChange={(e) => handleChange(e)}
+          />
+        </div>
+
         <button
           type="button"
           className="btn btn-primary"
-          onClick={(e): void => addUser(e)}
+          onClick={(e) => addUser(e)}
         >
           Submit
         </button>

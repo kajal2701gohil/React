@@ -18,15 +18,15 @@ const AuthenticationForm: React.FC = () => {
             <>
               <Route
                 path="/"
-                Component={() => <Login info={isUser} method={setIsUser} />}
+                Component={() => <Login method={setIsUser} />}
               ></Route>
               <Route
                 path="*"
-                Component={() => <Login info={isUser} method={setIsUser} />}
+                Component={() => <Login method={setIsUser} />}
               ></Route>
               <Route
                 path="/login"
-                Component={() => <Login info={isUser} method={setIsUser} />}
+                Component={() => <Login method={setIsUser} />}
               ></Route>
               <Route path="/registration" Component={Registration}></Route>
             </>
@@ -34,15 +34,15 @@ const AuthenticationForm: React.FC = () => {
             <>
               <Route
                 path="/home"
-                Component={() => <HomePage info={isUser} method={setIsUser} />}
+                Component={() => <HomePage method={setIsUser} />}
               />
               <Route
                 path="/"
-                Component={() => <HomePage info={isUser} method={setIsUser} />}
+                Component={() => <HomePage method={setIsUser} />}
               />
               <Route
                 path="*"
-                Component={() => <HomePage info={isUser} method={setIsUser} />}
+                Component={() => <HomePage method={setIsUser} />}
               />
             </>
           )}

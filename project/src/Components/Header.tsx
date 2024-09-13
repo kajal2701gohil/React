@@ -2,6 +2,7 @@ import React, { ChangeEvent, useRef, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
+import { profile } from "console";
 
 const Header: React.FC = () => {
   const [activeUser, setActiveUser] = useState(
@@ -12,11 +13,34 @@ const Header: React.FC = () => {
 
   const [visible, setVisible] = useState(false);
 
-  const [editData, setEditData] = useState({ name: "", email: "", id: null });
+  const [editData, setEditData] = useState({
+    name: "",
+    email: "",
+    id: null,
+    profile: "",
+  });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setEditData((prevData) => ({ ...prevData, [e.target.id]: e.target.value }));
+  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.id === "profile") {
+      let profile = e.target.files;
+
+      let profileImage = await toBase64(profile);
+      setEditData((prevData) => ({ ...prevData, [e.target.id]: profileImage }));
+    } else {
+      setEditData((prevData) => ({
+        ...prevData,
+        [e.target.id]: e.target.value,
+      }));
+    }
   };
+
+  const toBase64 = (file: any) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file[0]);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+    });
 
   const saveEditData = () => {
     editData.id = activeUser.id;
@@ -24,13 +48,15 @@ const Header: React.FC = () => {
     localStorage.setItem("activeUser", JSON.stringify(editData));
     data[activeUser.id].name = editData?.name;
     data[activeUser.id].email = editData?.email;
+    data[activeUser.id].profile = editData?.profile;
     localStorage.setItem("users", JSON.stringify(data));
   };
 
   return (
-    <div className="border border-2 p-3 text-end">
+    <div className="px-5 mx-5 text-end">
       <img
-        alt=""
+        src={activeUser.profile}
+        alt="profile"
         className="border border-2 rounded-circle"
         width={50}
         height={50}
@@ -57,16 +83,13 @@ const Header: React.FC = () => {
             }}
           >
             <div className="inline-flex flex-column gap-2">
-              <label
-                htmlFor="username"
-                className="text-primary-50 font-semibold"
-              >
+              <label htmlFor="name" className="text-primary-50 font-semibold">
                 Username
               </label>
               <InputText
                 id="name"
                 className="bg-white-alpha-20 border-none p-3 text-primary-50"
-                onChange={(e): void => handleChange(e)}
+                onChange={(e) => handleChange(e)}
               ></InputText>
             </div>
 
@@ -78,7 +101,7 @@ const Header: React.FC = () => {
                 id="email"
                 className="bg-white-alpha-20 border-none p-3 text-primary-50"
                 type="email"
-                onChange={(e): void => handleChange(e)}
+                onChange={(e) => handleChange(e)}
               ></InputText>
             </div>
 
@@ -93,6 +116,7 @@ const Header: React.FC = () => {
                 id="profile"
                 className="bg-white-alpha-20 border-none p-3 text-primary-50"
                 type="file"
+                onChange={(e) => handleChange(e)}
               ></InputText>
             </div>
 
