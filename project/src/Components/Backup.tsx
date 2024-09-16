@@ -11,47 +11,12 @@ interface Obj {
   parentKey: string;
 }
 
-const TreeFolder: React.FC = () => {
+const Backup: React.FC = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [value, setValue] = useState<string>("");
   let [iconVisible, setIconVisible] = useState<boolean>(false);
   let [dialogue, setDialogue] = useState<string>("");
   const [folders, setFolders] = useState<{}[]>([]);
-  const localData = [
-    { key: 0, label: "a", parent_key: null },
-    { key: 0 - 0, label: "b", parent_key: 0 },
-    { key: 0 - 1, label: "c", parent_key: 0 },
-    { key: 1, label: "x", parent_key: null },
-    { key: 1 - 0, label: "r", parent_key: 1 },
-    { key: 1 - 1, label: "q", parent_key: 1 },
-    { key: 2, label: "y", parent_key: null },
-    { key: 2 - 0, label: "p", parent_key: 2 },
-    { key: 2 - 1, label: "q", parent_key: 2 },
-  ];
-  let original: {
-    key: number;
-    label: string;
-    parent_key: null | number;
-    children?: {}[];
-  }[] = [];
-
-  const addData = (obj: {
-    key: number;
-    label: string;
-    parent_key: null | number;
-    children?: {}[];
-  }) => {
-    localData.forEach((x, i) => {
-      if (x.parent_key == null) {
-        original.push(x);
-      }
-      if (obj.key === x.parent_key) {
-        obj.children = obj.children ? obj.children : [];
-        obj.children.push(x);
-      }
-    });
-  };
-  addData(localData[0]);
 
   const [selectedKey, setSelectedKey] = useState<Obj>({
     key: "",
@@ -268,4 +233,4 @@ const TreeFolder: React.FC = () => {
   );
 };
 
-export default TreeFolder;
+export default Backup;

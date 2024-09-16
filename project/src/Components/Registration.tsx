@@ -35,7 +35,6 @@ const Registration: React.FC = () => {
     } else {
       setObj((prevData) => ({ ...prevData, [e.target.id]: e.target.value }));
     }
-    console.log(obj);
   };
 
   const toBase64 = (file: any) =>

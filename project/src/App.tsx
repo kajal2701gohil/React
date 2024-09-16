@@ -5,6 +5,7 @@ import HomePage from "./Components/HomePage";
 import Registration from "./Components/Registration";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import "primeicons/primeicons.css";
+import "/node_modules/primeflex/primeflex.css";
 
 const AuthenticationForm: React.FC = () => {
   const [isUser, setIsUser] = useState<boolean>(

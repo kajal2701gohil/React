@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useState } from "react";
 import { Link, NavigateFunction, useNavigate } from "react-router-dom";
+import { Button } from "primereact/button";
 
 interface User {
   name?: string;
@@ -50,23 +51,19 @@ const Login: React.FC<Iprops> = ({ method }) => {
       console.log(loginUser);
       localStorage.setItem("activeUser", JSON.stringify(loginUser));
       path("/");
-      console.log(loginUser);
     }
   };
 
   return (
-    <div className="border border-4 border-white shadow-lg w-25 position-absolute top-50 start-50 translate-middle p-4">
+    <div className="border-1 border-primary-500 shadow-1 w-3   p-4">
       <form>
         <h1>Login</h1>
         <div className="mb-3">
-          <label className="form-label" htmlFor="email">
-            Email address
-          </label>
+          <label htmlFor="email">Email address</label>
           <input
             type="email"
-            className="form-control"
+            className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
             id="email"
-            aria-describedby="emailHelp"
             onChange={(e): void => handleChange(e)}
           />
 
@@ -74,27 +71,26 @@ const Login: React.FC<Iprops> = ({ method }) => {
         </div>
 
         <div className="mb-3">
-          <label className="form-label" htmlFor="password">
-            Password
-          </label>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
-            className="form-control"
+            className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
             id="password"
             onChange={(e): void => handleChange(e)}
           />
           {errPassword && <span className="text-danger">{errPassword}</span>}
         </div>
 
-        <button
+        {/* <button
           type="button"
           className="btn btn-primary me-2"
           onClick={checkUser}
         >
           Submit
-        </button>
-        <Link to={"/registration"} className="btn btn-success">
-          Registration
+        </button> */}
+        <Button label="Submit" onClick={checkUser} type="button" />
+        <Link to={"/registration"}>
+          <Button label="Registration" severity="warning" />
         </Link>
       </form>
     </div>
