@@ -48,51 +48,50 @@ const Login: React.FC<Iprops> = ({ method }) => {
       method(true);
       loginUser.id = index;
       localStorage.setItem("isLogin", JSON.stringify(true));
-      console.log(loginUser);
       localStorage.setItem("activeUser", JSON.stringify(loginUser));
       path("/");
     }
   };
 
   return (
-    <div className="border-1 border-primary-500 shadow-1 w-3   p-4">
-      <form>
-        <h1>Login</h1>
-        <div className="mb-3">
-          <label htmlFor="email">Email address</label>
-          <input
-            type="email"
-            className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-            id="email"
-            onChange={(e): void => handleChange(e)}
+    <div className="flex justify-content-center flex-wrap parentDiv align-items-center">
+      <div className="border-1 border-primary-500 shadow-1 w-3 p-4 ">
+        <form>
+          <h1>Login</h1>
+          <div className="mb-3">
+            <label htmlFor="email">Email address</label>
+            <input
+              type="email"
+              className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              id="email"
+              onChange={(e): void => handleChange(e)}
+            />
+
+            {errEmail && <span className="text-red-500">{errEmail}</span>}
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              id="password"
+              onChange={(e): void => handleChange(e)}
+            />
+            {errPassword && <span className="text-red-500">{errPassword}</span>}
+          </div>
+
+          <Button
+            label="Submit"
+            onClick={checkUser}
+            type="button"
+            className="mx-1"
           />
-
-          {errEmail && <span className="text-danger">{errEmail}</span>}
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
-            id="password"
-            onChange={(e): void => handleChange(e)}
-          />
-          {errPassword && <span className="text-danger">{errPassword}</span>}
-        </div>
-
-        {/* <button
-          type="button"
-          className="btn btn-primary me-2"
-          onClick={checkUser}
-        >
-          Submit
-        </button> */}
-        <Button label="Submit" onClick={checkUser} type="button" />
-        <Link to={"/registration"}>
-          <Button label="Registration" severity="warning" />
-        </Link>
-      </form>
+          <Link to={"/registration"}>
+            <Button label="Registration" severity="warning" />
+          </Link>
+        </form>
+      </div>
     </div>
   );
 };

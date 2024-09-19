@@ -3,12 +3,14 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Tree } from "primereact/tree";
+import DocumentBtn from "./DocumentBtn";
 
 interface Folder {
   key: string;
   label: string;
   children?: Folder[];
   parentKey: string | null;
+  type?: string;
 }
 
 const TreeFolder: React.FC = () => {
@@ -22,16 +24,23 @@ const TreeFolder: React.FC = () => {
   const [changeFolderKey, setChangeFolderKey] = useState<string | null>(null);
 
   useEffect(() => {
-    const buildTree = (
-      data: Folder[],
-      parentKey: string | null = null
-    ): Folder[] => {
-      return data
-        .filter((item) => item.parentKey === parentKey)
-        .map((item) => ({
-          ...item,
-          children: buildTree(data, item.key),
-        }));
+    const buildTree = (lists: Folder[]): Folder[] => {
+      const listData: { [key: string]: Folder } = {};
+      const updatedList: Folder[] = [];
+
+      lists?.forEach((x) => {
+        listData[x.key] = { ...x, children: [] };
+      });
+
+      lists.forEach((item) => {
+        const node: Folder = listData[item.key];
+        if (item.parentKey !== null) {
+          listData[item.parentKey]?.children?.push(node);
+        } else {
+          updatedList.push(node);
+        }
+      });
+      return updatedList;
     };
 
     setFolders(buildTree(originalFolders));
@@ -39,8 +48,23 @@ const TreeFolder: React.FC = () => {
     setSelectedNodeKey(null);
   }, [originalFolders]);
 
-  const handleNodeHover = (key: string | null) => {
+  const handleDocFolders = (file: string, placedFolder: string) => {
+    const updatedFolders = [...originalFolders];
+    const newFolder: Folder = {
+      key: Date.now().toString(),
+      label: file,
+      parentKey: placedFolder,
+      type: "doc",
+    };
+    updatedFolders.push(newFolder);
+    setOriginalFolders(updatedFolders);
+  };
+
+  const handleNodeHover = (key: string | null, type: string | null) => {
     setHoveredNodeKey(key);
+    if (type) {
+      setHoveredNodeKey(null);
+    }
   };
 
   const handleDialogOpen = (type: string, key: string | null) => {
@@ -55,33 +79,33 @@ const TreeFolder: React.FC = () => {
   };
 
   const handleFolderUpdate = () => {
-    if (!inputValue) return;
+    if (inputValue) {
+      const updatedFolders = [...originalFolders];
+      const newFolder: Folder = {
+        key: Date.now().toString(),
+        label: inputValue,
+        parentKey: selectedNodeKey || null,
+      };
 
-    const updatedFolders = [...originalFolders];
-    const newFolder: Folder = {
-      key: Date.now().toString(),
-      label: inputValue,
-      parentKey: selectedNodeKey || null,
-    };
-
-    if (dialogType === "edit" && selectedNodeKey) {
-      const index = updatedFolders.findIndex(
-        (folder) => folder.key === selectedNodeKey
-      );
-      if (index !== -1) {
-        updatedFolders[index].label = inputValue;
-        updateFolderHierarchy(
-          updatedFolders[index],
-          changeFolderKey,
-          updatedFolders
+      if (dialogType === "edit" && selectedNodeKey) {
+        const index = updatedFolders.findIndex(
+          (folder) => folder.key === selectedNodeKey
         );
+        if (index >= 0) {
+          updatedFolders[index].label = inputValue;
+          updateFolderHierarchy(
+            updatedFolders[index],
+            changeFolderKey,
+            updatedFolders
+          );
+        }
+      } else {
+        updatedFolders.push(newFolder);
       }
-    } else {
-      updatedFolders.push(newFolder);
-    }
 
-    setOriginalFolders(updatedFolders);
-    handleDialogClose();
+      setOriginalFolders(updatedFolders);
+      handleDialogClose();
+    }
   };
 
   const updateFolderHierarchy = (
@@ -98,8 +122,8 @@ const TreeFolder: React.FC = () => {
   const nodeTemplate = (node: any) => (
     <span
       className="text-700 hover:text-primary"
-      onMouseOver={() => handleNodeHover(node.key)}
-      onMouseOut={() => handleNodeHover(null)}
+      onMouseOver={() => handleNodeHover(node.key, node?.type)}
+      onMouseOut={() => handleNodeHover(null, node?.type)}
     >
       <b>{node.label}</b>
       {hoveredNodeKey === node.key && (
@@ -118,73 +142,80 @@ const TreeFolder: React.FC = () => {
   );
 
   return (
-    <div>
-      <Tree
-        value={folders}
-        selectionMode="single"
-        className="w-full md:w-30rem"
-        nodeTemplate={nodeTemplate}
-      />
-      <Button
-        label="Category"
-        icon="pi pi-external-link"
-        onClick={() => handleDialogOpen("category", null)}
-      />
-      <Dialog visible={dialogVisible} modal onHide={handleDialogClose}>
-        <div
-          className="flex flex-column px-8 py-5 gap-4"
-          style={{
-            borderRadius: "12px",
-            backgroundImage:
-              "radial-gradient(circle at left top, var(--primary-400), var(--primary-700))",
-          }}
-        >
-          <div className="inline-flex flex-column gap-2">
-            <label htmlFor="category" className="text-primary-50 font-semibold">
-              Category Name
-            </label>
-            <InputText
-              id="category"
-              className="bg-white-alpha-20 border-none p-3 text-primary-50"
-              value={inputValue}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setInputValue(e.target.value)
-              }
-            />
-          </div>
-
-          {dialogType === "edit" && (
+    <div className="flex w-full text-center">
+      <div className="border-3 w-6">
+        <Tree
+          value={folders}
+          selectionMode="single"
+          className="w-full md:w-30rem m-2"
+          nodeTemplate={nodeTemplate}
+        />
+        <Button
+          label="Category"
+          icon="pi pi-folder-plus"
+          severity="success"
+          onClick={() => handleDialogOpen("category", null)}
+        />
+        <DocumentBtn folders={folders} handleDocFolders={handleDocFolders} />
+        <Dialog visible={dialogVisible} onHide={handleDialogClose}>
+          <div
+            className="flex flex-column px-8 py-5 gap-4 "
+            style={{
+              borderRadius: "12px",
+              backgroundColor: "gray",
+            }}
+          >
             <div className="inline-flex flex-column gap-2">
-              <label className="text-primary-50 font-semibold">
-                PlacedFolder
+              <label
+                htmlFor="category"
+                className="text-primary-50 font-semibold"
+              >
+                Category Name
               </label>
-              <Tree
-                value={folders}
-                selectionMode="single"
-                className="w-full md:w-30rem"
-                onNodeClick={(e) =>
-                  setChangeFolderKey(e.node.key as string | null)
+              <InputText
+                id="category"
+                className="bg-white-alpha-20 border-none p-3 text-white"
+                value={inputValue}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setInputValue(e.target.value)
                 }
               />
             </div>
-          )}
 
-          <div className="flex align-items-center gap-2">
-            <Button
-              label="Add"
-              onClick={handleFolderUpdate}
-              text
-              className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
-            />
-            <Button
-              label="Close"
-              onClick={handleDialogClose}
-              text
-              className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
-            />
+            {dialogType === "edit" && (
+              <div className="inline-flex flex-column gap-2">
+                <label className="text-primary-50 font-semibold">
+                  PlacedFolder
+                </label>
+                <Tree
+                  value={folders}
+                  selectionMode="single"
+                  className="w-full md:w-30rem"
+                  onNodeClick={(e) =>
+                    setChangeFolderKey(e.node.key as string | null)
+                  }
+                />
+              </div>
+            )}
+
+            <div className="flex align-items-center gap-2">
+              <Button
+                label="Add"
+                onClick={handleFolderUpdate}
+                text
+                className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
+              />
+              <Button
+                label="Close"
+                onClick={handleDialogClose}
+                text
+                className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
+              />
+            </div>
           </div>
-        </div>
-      </Dialog>
+        </Dialog>
+      </div>
+      <div></div>
     </div>
   );
 };

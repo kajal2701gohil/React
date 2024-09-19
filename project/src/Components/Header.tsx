@@ -1,18 +1,20 @@
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { profile } from "console";
+import { Avatar } from "primereact/avatar";
+import { Menubar } from "primereact/menubar";
 
-const Header: React.FC = () => {
+interface Iprops {
+  method: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Header: React.FC<Iprops> = ({ method }) => {
   const [activeUser, setActiveUser] = useState(
     JSON.parse(localStorage.getItem("activeUser") || "{}")
   );
-
   const data = JSON.parse(localStorage.getItem("users") || "[]");
-
   const [visible, setVisible] = useState(false);
-
   const [editData, setEditData] = useState({
     name: "",
     email: "",
@@ -52,20 +54,44 @@ const Header: React.FC = () => {
     localStorage.setItem("users", JSON.stringify(data));
   };
 
-  return (
-    <div className="px-5 mx-5 text-end">
-      <img
-        src={activeUser.profile}
-        alt="profile"
-        className="border border-2 rounded-circle"
-        width={50}
-        height={50}
+  const userLogout = () => {
+    method(false);
+    localStorage.setItem("isLogin", JSON.stringify(false));
+    localStorage.removeItem("activeUser");
+  };
+  const end = (
+    <div className="flex justify-content-between align-items-center">
+      <Avatar
+        image={activeUser.profile}
+        shape="circle"
+        className="mx-1"
+        size="large"
+      />{" "}
+      <span>{activeUser.name}</span>
+      <Button
+        icon="pi pi-user-edit"
+        className="mx-3 border-0"
+        severity="secondary"
+        rounded
+        text
+        raised
+        onClick={() => setVisible(true)}
       />
-      <span className="mx-3 fs-5 text-decoration-underline">
-        {activeUser.name}
-      </span>
+      <Button
+        icon="pi pi-sign-out"
+        className="border-0"
+        severity="secondary"
+        rounded
+        text
+        raised
+        onClick={userLogout}
+      />
+    </div>
+  );
+  return (
+    <div>
+      <Menubar end={end} className="p-3 bg-gray-100" />
 
-      <Button label="Edit" onClick={() => setVisible(true)} />
       <Dialog
         visible={visible}
         modal
@@ -78,8 +104,7 @@ const Header: React.FC = () => {
             className="flex flex-column px-8 py-5 gap-4"
             style={{
               borderRadius: "12px",
-              backgroundImage:
-                "radial-gradient(circle at left top, var(--primary-400), var(--primary-700))",
+              backgroundColor: "gray",
             }}
           >
             <div className="inline-flex flex-column gap-2">
@@ -123,14 +148,14 @@ const Header: React.FC = () => {
             <div className="flex align-items-center gap-2">
               <Button
                 label="Save"
-                onClick={saveEditData}
                 text
+                onClick={saveEditData}
                 className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
               ></Button>
               <Button
                 label="Close"
-                onClick={(e) => hide(e)}
                 text
+                onClick={(e) => hide(e)}
                 className="p-3 w-full text-primary-50 border-1 border-white-alpha-30 hover:bg-white-alpha-10"
               ></Button>
             </div>

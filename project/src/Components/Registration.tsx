@@ -1,5 +1,6 @@
 import React, { ChangeEvent, MouseEvent, useState } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { Button } from "primereact/button";
 
 interface User {
   name: string;
@@ -70,71 +71,59 @@ const Registration: React.FC = () => {
   };
 
   return (
-    <div className="border border-4 border-white shadow-lg w-25 position-absolute top-50 start-50 translate-middle p-4">
-      <form>
-        <h1>Registration</h1>
-        <div className="mb-3">
-          <label className="form-label" htmlFor="name">
-            Username
-          </label>
-          <input
-            className="form-control"
-            type="text"
-            id="name"
-            required
-            onChange={(e) => handleChange(e)}
-          />
-          {errname && <span className="text-danger">{errname}</span>}
-        </div>
-        <div className="mb-3">
-          <label className="form-label" htmlFor="email">
-            Email address
-          </label>
-          <input
-            className="form-control"
-            type="email"
-            id="email"
-            required
-            onChange={(e) => handleChange(e)}
-          />
-          {errEmail && <span className="text-danger">{errEmail}</span>}
-        </div>
+    <div className="flex justify-content-center flex-wrap parentDiv align-items-center">
+      <div className="border-1 border-primary-500 shadow-1 w-3 p-4 ">
+        <form>
+          <h1>Registration</h1>
+          <div className="mb-3">
+            <label htmlFor="name">Username</label>
+            <input
+              className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              type="text"
+              id="name"
+              required
+              onChange={(e) => handleChange(e)}
+            />
+            {errname && <span className="text-red-500">{errname}</span>}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="email">Email address</label>
+            <input
+              className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              type="email"
+              id="email"
+              required
+              onChange={(e) => handleChange(e)}
+            />
+            {errEmail && <span className="text-red-500">{errEmail}</span>}
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label" htmlFor="password">
-            Password
-          </label>
-          <input
-            className="form-control"
-            type="password"
-            required
-            id="password"
-            onChange={(e) => handleChange(e)}
-          />
-          {errPassword && <span className="text-danger">{errPassword}</span>}
-        </div>
+          <div className="mb-3">
+            <label htmlFor="password">Password</label>
+            <input
+              className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              type="password"
+              required
+              id="password"
+              onChange={(e) => handleChange(e)}
+            />
+            {errPassword && <span className="text-red-500">{errPassword}</span>}
+          </div>
 
-        <div className="mb-3">
-          <label className="form-label" htmlFor="profile">
-            Profile
-          </label>
-          <input
-            className="form-control"
-            type="file"
-            required
-            id="profile"
-            onChange={(e) => handleChange(e)}
-          />
-        </div>
+          <div className="mb-3">
+            <label htmlFor="profile">Profile</label>
+            <input
+              className="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
+              type="file"
+              required
+              id="profile"
+              onChange={(e) => handleChange(e)}
+            />
+          </div>
 
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={(e) => addUser(e)}
-        >
-          Submit
-        </button>
-      </form>
+          <Button label="Submit" onClick={(e) => addUser(e)} type="button" />
+        </form>
+      </div>
     </div>
   );
 };

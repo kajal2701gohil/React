@@ -12,7 +12,7 @@ const AuthenticationForm: React.FC = () => {
     JSON.parse(localStorage.getItem("isLogin") || "false")
   );
   return (
-    <div>
+    <>
       <BrowserRouter>
         <Routes>
           {!isUser ? (
@@ -49,7 +49,7 @@ const AuthenticationForm: React.FC = () => {
           )}
         </Routes>
       </BrowserRouter>
-    </div>
+    </>
   );
 };
 
