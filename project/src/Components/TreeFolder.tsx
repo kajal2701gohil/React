@@ -4,13 +4,13 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Tree } from "primereact/tree";
 import DocumentBtn from "./DocumentBtn";
+import BriefFolder from "./BriefFolder";
 
 interface Folder {
   key: string;
   label: string;
   children?: Folder[];
   parentKey: string | null;
-  type?: string;
 }
 
 const TreeFolder: React.FC = () => {
@@ -19,9 +19,14 @@ const TreeFolder: React.FC = () => {
   const [hoveredNodeKey, setHoveredNodeKey] = useState<string | null>(null);
   const [dialogType, setDialogType] = useState<string>("");
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [originalFolders, setOriginalFolders] = useState<Folder[]>([]);
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
+  const [targetNode, setTargetNode] = useState<Folder | null>(null);
   const [changeFolderKey, setChangeFolderKey] = useState<string | null>(null);
+  const activeUser = JSON.parse(localStorage.getItem("activeUser") || "{}");
+  const [originalFolders, setOriginalFolders] = useState<Folder[]>(
+    activeUser.folderData || []
+  );
+  const data = JSON.parse(localStorage.getItem("users") || "[]");
 
   useEffect(() => {
     const buildTree = (lists: Folder[]): Folder[] => {
@@ -42,29 +47,18 @@ const TreeFolder: React.FC = () => {
       });
       return updatedList;
     };
+    activeUser.folderData = originalFolders;
+    localStorage.setItem("activeUser", JSON.stringify(activeUser));
+    data.splice(activeUser.id, 1, activeUser);
+    localStorage.setItem("users", JSON.stringify(data));
 
     setFolders(buildTree(originalFolders));
     setChangeFolderKey(null);
     setSelectedNodeKey(null);
   }, [originalFolders]);
 
-  const handleDocFolders = (file: string, placedFolder: string) => {
-    const updatedFolders = [...originalFolders];
-    const newFolder: Folder = {
-      key: Date.now().toString(),
-      label: file,
-      parentKey: placedFolder,
-      type: "doc",
-    };
-    updatedFolders.push(newFolder);
-    setOriginalFolders(updatedFolders);
-  };
-
-  const handleNodeHover = (key: string | null, type: string | null) => {
+  const handleNodeHover = (key: string | null) => {
     setHoveredNodeKey(key);
-    if (type) {
-      setHoveredNodeKey(null);
-    }
   };
 
   const handleDialogOpen = (type: string, key: string | null) => {
@@ -102,7 +96,6 @@ const TreeFolder: React.FC = () => {
       } else {
         updatedFolders.push(newFolder);
       }
-
       setOriginalFolders(updatedFolders);
       handleDialogClose();
     }
@@ -119,11 +112,15 @@ const TreeFolder: React.FC = () => {
       .forEach((child) => updateFolderHierarchy(child, folder.key, allFolders));
   };
 
+  const onNodeClick = (event: any) => {
+    setTargetNode({ ...event.node });
+  };
+
   const nodeTemplate = (node: any) => (
     <span
       className="text-700 hover:text-primary"
-      onMouseOver={() => handleNodeHover(node.key, node?.type)}
-      onMouseOut={() => handleNodeHover(null, node?.type)}
+      onMouseOver={() => handleNodeHover(node.key)}
+      onMouseOut={() => handleNodeHover(null)}
     >
       <b>{node.label}</b>
       {hoveredNodeKey === node.key && (
@@ -142,13 +139,14 @@ const TreeFolder: React.FC = () => {
   );
 
   return (
-    <div className="flex w-full text-center">
-      <div className="border-3 w-6">
+    <div className="flex w-full">
+      <div className=" w-3">
         <Tree
           value={folders}
           selectionMode="single"
           className="w-full md:w-30rem m-2"
           nodeTemplate={nodeTemplate}
+          onNodeClick={onNodeClick}
         />
         <Button
           label="Category"
@@ -156,7 +154,7 @@ const TreeFolder: React.FC = () => {
           severity="success"
           onClick={() => handleDialogOpen("category", null)}
         />
-        <DocumentBtn folders={folders} handleDocFolders={handleDocFolders} />
+        <DocumentBtn folders={folders} />
         <Dialog visible={dialogVisible} onHide={handleDialogClose}>
           <div
             className="flex flex-column px-8 py-5 gap-4 "
@@ -215,7 +213,9 @@ const TreeFolder: React.FC = () => {
           </div>
         </Dialog>
       </div>
-      <div></div>
+      <div className=" p-5">
+        {targetNode !== null ? <BriefFolder target={targetNode} /> : ""}
+      </div>
     </div>
   );
 };
