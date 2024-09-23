@@ -9,3 +9,9 @@ body {
 i {
 	cursor: pointer;
 }
+
+.p-tree {
+	border: 0;
+	padding: 0;
+	background: none;
+}

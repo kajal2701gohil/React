@@ -12,24 +12,20 @@ const Registration: React.FC = () => {
   let [users, setUsers] = useState<User[]>(
     JSON.parse(localStorage.getItem("users") || "[]")
   );
-
   const [errname, setErrName] = useState<string>("");
   const [errEmail, setErrEmail] = useState<string>("");
   const [errPassword, setErrPassword] = useState<string>("");
-
   const emptyObj: User = {
     name: "",
     email: "",
     password: "",
   };
-
   const path: NavigateFunction = useNavigate();
-
   let [obj, setObj] = useState<User>(emptyObj);
 
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.id === "profile") {
-      let profile = e.target.files;
+      let profile: FileList | null = e.target.files;
 
       let profileImage = await toBase64(profile);
       setObj((prevData) => ({ ...prevData, [e.target.id]: profileImage }));
@@ -40,13 +36,13 @@ const Registration: React.FC = () => {
 
   const toBase64 = (file: any) =>
     new Promise((resolve, reject) => {
-      const reader = new FileReader();
+      const reader: FileReader = new FileReader();
       reader.readAsDataURL(file[0]);
       reader.onload = () => resolve(reader.result);
       reader.onerror = reject;
     });
 
-  const addUser = (e: MouseEvent<HTMLButtonElement>): void => {
+  const addUser = (): void => {
     if (obj.name === "") {
       setErrName("Please enter the name");
     } else {
@@ -121,7 +117,7 @@ const Registration: React.FC = () => {
             />
           </div>
 
-          <Button label="Submit" onClick={(e) => addUser(e)} type="button" />
+          <Button label="Submit" onClick={addUser} type="button" />
         </form>
       </div>
     </div>

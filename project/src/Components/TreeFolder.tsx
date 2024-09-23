@@ -107,9 +107,7 @@ const TreeFolder: React.FC = () => {
     allFolders: Folder[]
   ) => {
     folder.parentKey = newParentKey;
-    allFolders
-      .filter((child) => child.parentKey === folder.key)
-      .forEach((child) => updateFolderHierarchy(child, folder.key, allFolders));
+    allFolders.filter((child) => child.parentKey === folder.key);
   };
 
   const onNodeClick = (event: any) => {
@@ -140,7 +138,7 @@ const TreeFolder: React.FC = () => {
 
   return (
     <div className="flex w-full">
-      <div className=" w-3">
+      <div className="w-3  p-3">
         <Tree
           value={folders}
           selectionMode="single"
@@ -213,7 +211,7 @@ const TreeFolder: React.FC = () => {
           </div>
         </Dialog>
       </div>
-      <div className=" p-5">
+      <div className=" p-5 border-left-3 mx-6">
         {targetNode !== null ? <BriefFolder target={targetNode} /> : ""}
       </div>
     </div>

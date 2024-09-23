@@ -14,17 +14,13 @@ interface Iprops {
 
 const Login: React.FC<Iprops> = ({ method }) => {
   const data = JSON.parse(localStorage.getItem("users") || "[]");
-
   const [errEmail, setErrEmail] = useState<string>("");
   const [errPassword, setErrPassword] = useState<string>("");
-
   const path: NavigateFunction = useNavigate();
-
   const emptyObj: User = {
     email: "",
     password: "",
   };
-
   let [obj, setObj] = useState<User>(emptyObj);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
